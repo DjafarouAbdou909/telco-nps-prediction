@@ -1,65 +1,65 @@
-# Projet de prédiction NPS – Notes
+# NPS Prediction Project – Notes
 
-## 1. Vue d’ensemble du projet
+## 1. Project Overview
 
-Ce projet vise à prédire la catégorie NPS (Détracteur, Passif, Promoteur) des clients d’un opérateur télécom à partir de données structurées liées à leur compte et à leur comportement.
+This project aims to predict the NPS category (Detractor, Passive, Promoter) of telecom customers using structured data related to their account and behavior.
 
-L’objectif est de soutenir les stratégies de rétention client en identifiant les clients à risque et en comprenant les facteurs d’insatisfaction.
-
----
-
-## 2. Problème métier
-
-Seulement 15 % des clients répondent aux enquêtes NPS, ce qui crée une zone d’ombre importante pour l’entreprise.
-
-Le défi consiste à étendre cette visibilité à l’ensemble de la base client grâce au machine learning.
+The goal is to support customer retention strategies by identifying at-risk customers and understanding the drivers of dissatisfaction.
 
 ---
 
-## 3. Problème de machine learning
+## 2. Business Problem
 
-Il s’agit d’un problème de classification supervisée à trois classes ordonnées :
+Only 15% of customers respond to NPS surveys, which creates a significant blind spot for the company.
 
-- Détracteur
-- Passif
-- Promoteur
-
-La variable cible est construite à partir du Score de Satisfaction (1–5).
+The challenge is to extend this visibility to the entire customer base using machine learning.
 
 ---
 
-## 4. Hypothèses clés
+## 3. Machine Learning Problem
 
-- Le Score de Satisfaction est un proxy acceptable du NPS.
-- Les répondants aux enquêtes sont partiellement représentatifs de l’ensemble des clients.
-- Les variables structurées contiennent suffisamment d’information pour prédire la satisfaction client.
+This is a supervised classification problem with three ordered classes:
 
----
+- Detractor
+- Passive
+- Promoter
 
-## 5. Risques et limites
-
-- Risque de fuite de données avec Churn Score et Churn Value.
-- Déséquilibre des classes (en particulier les Détracteurs).
-- Incertitude liée à la construction de la variable cible.
-- Décalage de distribution entre répondants et non-répondants.
-- Corrélation ≠ causalité.
+The target variable is built from the Satisfaction Score (1–5).
 
 ---
 
-## 6. Critères de succès
+## 4. Key Assumptions
 
-- Bon rappel sur la classe Détracteur.
-- Utilisation de métriques équilibrées (F1 macro, kappa pondéré, etc.).
-- Modèle interprétable.
-- Résultats exploitables par des équipes non techniques.
+- The Satisfaction Score is an acceptable proxy for NPS.
+- Survey respondents are partially representative of the full customer base.
+- Structured features contain enough information to predict customer satisfaction.
 
 ---
 
-## 7. Prochaines étapes
+## 5. Risks and Limitations
 
-- Nettoyage et préparation des données
-- Ingénierie des variables
-- Modèle baseline
-- Modélisation avancée
-- Évaluation et analyse d’équité
-- Prototype de déploiement
+- Risk of data leakage with Churn Score and Churn Value.
+- Class imbalance (especially Detractors).
+- Uncertainty in how the target variable is constructed.
+- Distribution shift between respondents and non-respondents.
+- Correlation ≠ causation.
+
+---
+
+## 6. Success Criteria
+
+- Good recall on the Detractor class.
+- Use of balanced metrics (F1 macro, weighted kappa, etc.).
+- Interpretable model.
+- Results usable by non-technical teams.
+
+---
+
+## 7. Next Steps
+
+- Data cleaning and preparation
+- Feature engineering
+- Baseline model
+- Advanced modeling
+- Evaluation and fairness analysis
+- Deployment prototype
