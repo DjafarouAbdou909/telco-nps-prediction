@@ -1,16 +1,3 @@
-"""
-Entraîne et sauvegarde les modèles NPS avec les versions de librairies
-installées localement (évite les erreurs InconsistentVersionWarning /
-"No module named '_loss'" qui surviennent quand on transfère des fichiers
-.joblib entre environnements scikit-learn différents).
-
-Usage :
-    python train_and_save_models.py
-
-Prérequis : avoir déjà lancé 03_data_preparation (les CSV train/test
-doivent exister dans data/processed/).
-"""
-
 import json
 import sklearn
 from datetime import datetime
@@ -46,7 +33,6 @@ def main():
     cat_cols = X_train.select_dtypes(include="str").columns.tolist()
     num_cols = X_train.select_dtypes(exclude="str").columns.tolist()
 
-    # --- Modèle principal : Logistic Regression ---
     print("Entraînement Logistic Regression...")
     pipe_lr = Pipeline([
         ("prep", ColumnTransformer([
@@ -58,7 +44,6 @@ def main():
     pipe_lr.fit(X_train, y_train)
     joblib.dump(pipe_lr, MODELS_DIR / "nps_model_logreg.joblib")
 
-    # --- Modèle de comparaison : Gradient Boosting ---
     print("Entraînement Gradient Boosting...")
     X_train_gb = X_train.copy()
     for c in cat_cols:
@@ -70,7 +55,6 @@ def main():
     gb.fit(X_train_gb, y_train)
     joblib.dump(gb, MODELS_DIR / "nps_model_gradientboosting.joblib")
 
-    # --- Modèle de comparaison : Ordinal Regression ---
     print("Entraînement Ordinal Regression...")
     prep_ord = ColumnTransformer([
         ("cat", OneHotEncoder(handle_unknown="ignore"), cat_cols),
@@ -85,7 +69,6 @@ def main():
     joblib.dump({"preprocessor": prep_ord, "model": ord_model},
                 MODELS_DIR / "nps_model_ordinal.joblib")
 
-    # --- Métadonnées, avec la vraie version locale de scikit-learn ---
     metadata = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "target_classes_order": TARGET_ORDER,
@@ -112,7 +95,6 @@ def main():
         json.dump(metadata, f, indent=2, ensure_ascii=False)
 
     print(f"\nTerminé. Modèles sauvegardés dans {MODELS_DIR.resolve()}/")
-    print(f"scikit-learn version utilisée : {sklearn.__version__}")
 
 
 if __name__ == "__main__":
