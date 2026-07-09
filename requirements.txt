@@ -1,6 +1,9 @@
-pandas
-numpy
-matplotlib
-seaborn
 scikit-learn==1.9.0
 mord
+lightgbm
+shap
+numba==0.66.0
+numpy==2.4.6
+pandas
+matplotlib
+joblib
