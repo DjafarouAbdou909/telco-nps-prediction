@@ -30,8 +30,10 @@ explainer = shap.LinearExplainer(clf, masker, feature_names=feat_names)
 FEATURE_COLS = X_train.columns.tolist()
 CUSTOMER_CHOICES = test["Customer ID"].tolist()
 
+
 def clean_feat(n):
     return n.replace("cat__", "").replace("num__", "")
+
 
 def predict_from_row(row_df):
     proba = pipe_lr.predict_proba(row_df)[0]
@@ -45,8 +47,9 @@ def predict_from_row(row_df):
     top_drivers = pd.Series(sv_det, index=[clean_feat(f) for f in feat_names]).sort_values(key=abs, ascending=False).head(5)
     return pred_class, proba_dict, top_drivers
 
+
 def make_driver_plot(top_drivers, title):
-    fig, ax = plt.subplots(figsize=(5,3))
+    fig, ax = plt.subplots(figsize=(5, 3))
     sorted_drivers = top_drivers.sort_values()
     colors = ["#B22222" if v > 0 else "#2E8A5C" for v in sorted_drivers.values]
     sorted_drivers.plot(kind="barh", ax=ax, color=colors)
@@ -55,18 +58,20 @@ def make_driver_plot(top_drivers, title):
     plt.tight_layout()
     return fig
 
+
 def predict_existing(customer_id):
     row = test[test["Customer ID"] == customer_id][FEATURE_COLS]
     if row.empty:
-        return "Client introuvable", {}, None
+        return "Customer not found", {}, None
     pred_class, proba_dict, top_drivers = predict_from_row(row)
     fig = make_driver_plot(top_drivers, "Top drivers (push toward Detractor)")
-    return f"Prédiction : {pred_class}", proba_dict, fig
+    return f"Prediction: {pred_class}", proba_dict, fig
+
 
 def predict_manual(gender, senior, partner, dependents, tenure, phone, multi_lines,
                     internet, security, backup, protection, tech_support, tv, movies,
                     contract, paperless, payment, monthly_charges, total_charges):
-    # Reconstruction des features engineered à partir des inputs bruts
+    # Reconstruct engineered features from the raw inputs
     n_services = sum([
         phone == "Yes", internet != "No",
         security == "Yes", backup == "Yes", protection == "Yes",
@@ -89,54 +94,55 @@ def predict_manual(gender, senior, partner, dependents, tenure, phone, multi_lin
 
     pred_class, proba_dict, top_drivers = predict_from_row(row)
     fig = make_driver_plot(top_drivers, "Top drivers for this profile")
-    return f"Prédiction : {pred_class}", proba_dict, fig
+    return f"Prediction: {pred_class}", proba_dict, fig
 
-with gr.Blocks(title="NPS Prediction : Retention Dashboard") as demo:
-    gr.Markdown("# NPS Prediction :Outil de priorisation rétention")
+
+with gr.Blocks(title="NPS Prediction - Retention Dashboard") as demo:
+    gr.Markdown("# NPS Prediction - Retention Prioritization Tool")
     gr.Markdown(
-        "Modèle : régression logistique (retenu en `05_evaluation` pour son lift sur la classe Détracteur). "
-        "Les probabilités affichées ne sont pas parfaitement calibrées (voir `05_evaluation`) "
-        "à utiliser pour **classer** les clients entre eux, pas comme un pourcentage de risque absolu."
+        "Model: logistic regression (selected in `05_evaluation` for its lift on the Detractor class). "
+        "The probabilities shown are not perfectly calibrated (see `05_evaluation`) "
+        "use them to **rank** customers relative to each other, not as an absolute risk percentage."
     )
-    with gr.Tab("Client existant"):
+    with gr.Tab("Existing Customer"):
         customer_dropdown = gr.Dropdown(choices=CUSTOMER_CHOICES, label="Customer ID", value=CUSTOMER_CHOICES[0])
-        predict_btn1 = gr.Button("Prédire", variant="primary")
-        pred_output1 = gr.Textbox(label="Résultat")
-        proba_output1 = gr.Label(label="Probabilités par catégorie")
-        drivers_plot1 = gr.Plot(label="Principaux facteurs (SHAP)")
+        predict_btn1 = gr.Button("Predict", variant="primary")
+        pred_output1 = gr.Textbox(label="Result")
+        proba_output1 = gr.Label(label="Probability by Category")
+        drivers_plot1 = gr.Plot(label="Top Drivers (SHAP)")
         predict_btn1.click(fn=predict_existing, inputs=customer_dropdown, outputs=[pred_output1, proba_output1, drivers_plot1])
 
-    with gr.Tab("Saisie manuelle"):
+    with gr.Tab("Manual Entry"):
         with gr.Row():
-            gender_in = gr.Radio(["Male","Female"], label="Genre", value="Female")
-            senior_in = gr.Radio([0,1], label="Senior Citizen", value=0)
-            partner_in = gr.Radio(["Yes","No"], label="Partner", value="No")
-            dependents_in = gr.Radio(["Yes","No"], label="Dependents", value="No")
+            gender_in = gr.Radio(["Male", "Female"], label="Gender", value="Female")
+            senior_in = gr.Radio([0, 1], label="Senior Citizen", value=0)
+            partner_in = gr.Radio(["Yes", "No"], label="Partner", value="No")
+            dependents_in = gr.Radio(["Yes", "No"], label="Dependents", value="No")
         with gr.Row():
-            tenure_in = gr.Slider(0, 72, value=12, label="Tenure (mois)")
+            tenure_in = gr.Slider(0, 72, value=12, label="Tenure (months)")
             monthly_in = gr.Slider(18, 120, value=70, label="Monthly Charges ($)")
             total_in = gr.Number(value=840, label="Total Charges ($)")
         with gr.Row():
-            contract_in = gr.Dropdown(["Month-to-month","One year","Two year"], label="Contract", value="Month-to-month")
-            payment_in = gr.Dropdown(["Electronic check","Mailed check","Bank transfer (automatic)","Credit card (automatic)"], label="Payment Method", value="Electronic check")
-            paperless_in = gr.Radio(["Yes","No"], label="Paperless Billing", value="Yes")
+            contract_in = gr.Dropdown(["Month-to-month", "One year", "Two year"], label="Contract", value="Month-to-month")
+            payment_in = gr.Dropdown(["Electronic check", "Mailed check", "Bank transfer (automatic)", "Credit card (automatic)"], label="Payment Method", value="Electronic check")
+            paperless_in = gr.Radio(["Yes", "No"], label="Paperless Billing", value="Yes")
         with gr.Row():
-            phone_in = gr.Radio(["Yes","No"], label="Phone Service", value="Yes")
-            multilines_in = gr.Radio(["Yes","No","No phone service"], label="Multiple Lines", value="No")
-            internet_in = gr.Dropdown(["DSL","Fiber optic","No"], label="Internet Service", value="Fiber optic")
+            phone_in = gr.Radio(["Yes", "No"], label="Phone Service", value="Yes")
+            multilines_in = gr.Radio(["Yes", "No", "No phone service"], label="Multiple Lines", value="No")
+            internet_in = gr.Dropdown(["DSL", "Fiber optic", "No"], label="Internet Service", value="Fiber optic")
         with gr.Row():
-            security_in = gr.Radio(["Yes","No","No internet service"], label="Online Security", value="No")
-            backup_in = gr.Radio(["Yes","No","No internet service"], label="Online Backup", value="No")
-            protection_in = gr.Radio(["Yes","No","No internet service"], label="Device Protection", value="No")
+            security_in = gr.Radio(["Yes", "No", "No internet service"], label="Online Security", value="No")
+            backup_in = gr.Radio(["Yes", "No", "No internet service"], label="Online Backup", value="No")
+            protection_in = gr.Radio(["Yes", "No", "No internet service"], label="Device Protection", value="No")
         with gr.Row():
-            tech_in = gr.Radio(["Yes","No","No internet service"], label="Tech Support", value="No")
-            tv_in = gr.Radio(["Yes","No","No internet service"], label="Streaming TV", value="No")
-            movies_in = gr.Radio(["Yes","No","No internet service"], label="Streaming Movies", value="No")
+            tech_in = gr.Radio(["Yes", "No", "No internet service"], label="Tech Support", value="No")
+            tv_in = gr.Radio(["Yes", "No", "No internet service"], label="Streaming TV", value="No")
+            movies_in = gr.Radio(["Yes", "No", "No internet service"], label="Streaming Movies", value="No")
 
-        predict_btn2 = gr.Button("Prédire", variant="primary")
-        pred_output2 = gr.Textbox(label="Résultat")
-        proba_output2 = gr.Label(label="Probabilités par catégorie")
-        drivers_plot2 = gr.Plot(label="Principaux facteurs (SHAP)")
+        predict_btn2 = gr.Button("Predict", variant="primary")
+        pred_output2 = gr.Textbox(label="Result")
+        proba_output2 = gr.Label(label="Probability by Category")
+        drivers_plot2 = gr.Plot(label="Top Drivers (SHAP)")
 
         predict_btn2.click(
             fn=predict_manual,
