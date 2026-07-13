@@ -26,7 +26,7 @@ telco-nps-prediction/
 │   └── explain.py
 ├── app.py
 ├── train_and_save_models.py
-├── .py
+├── test_model_loading.py
 ├── generate_verbatims.py
 ├── evaluate_text_signal.py
 ├── data/
