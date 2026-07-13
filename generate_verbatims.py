@@ -3,8 +3,6 @@ Generates one synthetic "last support interaction" verbatim per customer
 in the test set, using the Gemini API, conditioned on a subset of the
 customer's tabular features (tenure, contract, services, NPS risk).
 
-Bonus track, section 4.4 of the Artefact challenge brief.
-
 Usage:
     export GEMINI_API_KEY="your-key-here"
     python generate_verbatims.py
@@ -30,7 +28,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 from google import genai
+
+load_dotenv()  # reads GEMINI_API_KEY from a local .env file if present
 
 SEED = 42
 NOISE_FLIP_RATE = 0.15  # fraction of customers whose tone is deliberately mismatched with their true NPS category

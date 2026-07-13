@@ -1,6 +1,4 @@
 """
-Evaluates whether the synthetic verbatims add predictive signal beyond
-the tabular baseline model — section 4.4 of the Artefact challenge brief.
 
 Compares three configurations on the same test set:
     1. Tabular only (the production model from 05_evaluation)

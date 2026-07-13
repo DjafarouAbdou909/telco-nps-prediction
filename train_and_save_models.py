@@ -41,14 +41,10 @@ def main():
 
     cat_cols, num_cols = split_column_types(X_train)
 
-    # --- Primary model: Logistic Regression (see 05_evaluation for the
-    # justification: best lift on the Detractor class for the retention
-    # outreach use case) ---
     print("Training Logistic Regression...")
     pipe_lr = train_production_model(X_train, y_train)
     joblib.dump(pipe_lr, MODELS_DIR / "nps_model_logreg.joblib")
 
-    # --- Comparison model: Gradient Boosting (see 04_modeling) ---
     print("Training Gradient Boosting...")
     X_train_gb = X_train.copy()
     for c in cat_cols:
@@ -60,7 +56,6 @@ def main():
     gb.fit(X_train_gb, y_train)
     joblib.dump(gb, MODELS_DIR / "nps_model_gradientboosting.joblib")
 
-    # --- Comparison model: Ordinal Regression (see 04_modeling) ---
     print("Training Ordinal Regression...")
     from sklearn.compose import ColumnTransformer
     from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -77,7 +72,6 @@ def main():
     joblib.dump({"preprocessor": prep_ord, "model": ord_model},
                 MODELS_DIR / "nps_model_ordinal.joblib")
 
-    # --- Metadata, with the real local scikit-learn version ---
     metadata = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "target_classes_order": TARGET_ORDER,
