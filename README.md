@@ -51,7 +51,7 @@ telco-nps-prediction/
 │   ├── 05_evaluation.ipynb
 │   ├── 06_interpretability.ipynb
 │   ├── 07_fairness_audit.ipynb
-│   └── 09_productization.ipynb
+│   └── 08_productization.ipynb
 └── requirements.txt
 ```
 
